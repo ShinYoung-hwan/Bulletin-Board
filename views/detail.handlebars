@@ -1,0 +1,93 @@
+{{!-- 게시글 영역 --}}
+<div>
+    {{!-- 수정 삭제 버튼 --}}
+    <div>
+        <a href="#" onclick="modifyPost({{ post.id }})">수정</a>
+        <a href="#" onclick="deletePost({{ post.id }})">삭제</a>
+    </div>
+    {{!-- 게시물 제목 --}}
+    <h1>{{ post.title }}</h1>
+
+    <div>
+        {{ dateString post.createdDt }}
+    </div>
+
+    {{!-- 게시물 내용 --}}
+    <p>{{ post.content }}</p>
+</div>
+
+{{!-- 댓글 영역 --}}
+<div>
+    {{!-- 댓글 입력 --}}
+    <form method="post">
+        <textarea name="comment" id="comment"></textarea>
+        <button>작성</button>
+    </form>
+
+    {{!-- 댓글 표시 --}}
+    {{#if comments}}
+
+    <div>{{ lengthOfList comments }} 개의 댓글이 있습니다.</div>
+    <div>
+    {{#each comments }}
+    <div>
+        <div>
+            <a href="#" onclick="modifyComment({{post_id}}, {{id}})">수정</a>
+            <a href="#" onclick="deleteComment({{post_id}}, {{id}})">삭제</a>
+        </div>
+        <div>{{ id }}</div>
+        <div>{{ content }}</div>
+        <div>{{ dateString createdDt }}</div>
+    </div>
+    {{/each}}
+    </div>
+
+    {{else}}
+
+    <div>첫 댓글의 주인공이 되보세요!</div>
+
+    {{/if}}
+
+</div>
+
+<script>
+function modifyPost (id) {
+    console.log("modify post", id);
+}
+async function deletePost (id) {
+    const result = await fetch(`/detail/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ id })
+    })
+    const data = await result.json();
+    if(!data.isSuccess){
+        alert("삭제에 실패했습니다.");
+        return;
+    }
+    alert("삭제 성공!");
+    document.location = "/";
+}
+function modifyComment (post_id, id) {
+    console.log("modify comment", id);
+}
+async function deleteComment (post_id, id) {\
+    const result = await fetch("/delete_comment", {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ post_id: post_id, id: id })
+    })
+
+    const data = await result.json();
+    if(!data.isSuccess){
+        alert("삭제에 실패했습니다.");
+        return;
+    }
+    alert("삭제 성공!");
+    document.location.reload();
+}
+</script>
