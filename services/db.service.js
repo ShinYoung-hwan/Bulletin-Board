@@ -40,8 +40,24 @@ export function createPost(post) {
     fs.writeFileSync(DATABASE, JSON.stringify(data));
 }
 
-export function updatePost(id, post) {
+export function modifyPost(id, modifiedPost) {
     const db = fs.readFileSync(DATABASE);
+    const data = JSON.parse(db.toString());
+    const modifiedPosts = [];
+    data["posts"].forEach((post) => {
+        if (post.id == id) {
+            modifiedPosts.push({
+                id,
+                ...modifiedPost,
+                createdDt: post.createdDt,
+                modifiedDt: new Date().toISOString()
+            });
+        } else {
+            modifiedPosts.push(post);
+        }
+    })
+    data["posts"] = modifiedPosts;
+    fs.writeFileSync(DATABASE, JSON.stringify(data));
 }
 
 export function deletePost(id) {
@@ -74,8 +90,25 @@ export function createComment(post_id, comment) {
     fs.writeFileSync(DATABASE, JSON.stringify(data));
 }
 
-export function updateComment(post_id, id, comment) {
-
+export function modifyComment(post_id, id, commentContent) {
+    const db = fs.readFileSync(DATABASE);
+    const data = JSON.parse(db.toString());
+    const modifiedComments = [];
+    data["comments"].forEach((comment) => {
+        if (comment.post_id === post_id && comment.id === id){
+            modifiedComments.push({
+                id,
+                post_id,
+                content: commentContent,
+                createdDt: comment.createdDt,
+                modifiedDt: new Date().toISOString()
+            })
+        } else {
+            modifiedComments.push(comment);
+        }
+    })
+    data["comments"] = modifiedComments;
+    fs.writeFileSync(DATABASE, JSON.stringify(data));
 }
 
 export function deleteComment(post_id, id) {

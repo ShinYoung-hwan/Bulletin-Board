@@ -1,7 +1,7 @@
 import express from "express";
 import handlebars from "express-handlebars";
 import path from "path";
-import { createComment, createPost, deleteComment, deletePost, getComments, getPost, getPosts } from "./services/db.service.js";
+import { createComment, createPost, deleteComment, deletePost, getComments, getPost, getPosts, modifyComment, modifyPost } from "./services/db.service.js";
 import { helpers } from "./configs/handlebar.helper.js";
 
 // 상수 설정
@@ -41,8 +41,7 @@ app.post('/index', (req, res) => {
     createPost(req.body);
     res.redirect("index");
 })
-
-// 게시판 디테일
+// 게시판 및 댓글 조회
 app.get('/detail/:id', (req, res) => {
     const post = getPost(Number(req.params.id));
     const comments = getComments(Number(req.params.id));
@@ -58,16 +57,18 @@ app.get('/detail/:id', (req, res) => {
         comments
     });
 })
-// 게시글 디테일 수정
+// 게시글 수정
 app.put('/detail/:id', (req, res) => {
-
+    const id = Number(req.params.id);
+    modifyPost(id, req.body);
+    return res.json({ isSuccess: true });
 })
 // 게시글 삭제
 app.delete('/detail/:id', (req, res) => {
     deletePost(req.body.id);
     return res.json({ isSuccess: true });
 })
-// 게시글 디테일에서 댓글 생성
+// 댓글 생성
 app.post('/detail/:id', (req, res) => {
     const post_id = Number(req.params.id);
     createComment(post_id, {
@@ -76,17 +77,24 @@ app.post('/detail/:id', (req, res) => {
 
     res.redirect(`/detail/${post_id}`);
 })
+// 댓글 수정
+app.put('/modify_comment', (req, res) => {
+    const post_id = Number(req.body.post_id);
+    const id = Number(req.body.id);
+    const commentContent = req.body.commentContent;
+    console.log(commentContent);
 
-app.put('/update_comment', (req, res) => {
-    
+    modifyComment(post_id, id, commentContent);
+
+    return res.json({ isSuccess: true });
 })
+// 댓글 삭제
 app.delete('/delete_comment', (req, res) => {
     const post_id = Number(req.body.post_id);
     const id = Number(req.body.id);
     deleteComment(post_id, id);
     return res.json({ isSuccess: true });
 })
-
 
 app.listen(3000, () => { 
     console.log('server starts'); 
