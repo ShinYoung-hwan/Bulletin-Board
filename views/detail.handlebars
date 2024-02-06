@@ -37,16 +37,16 @@
             <div class="card card-body">
                 {{!-- 댓글 입력 --}}
                 <form class="form d-flex mb-3" method="post">
-                    <textarea class="form-control" name="comment" id="comment" placeholder="댓글을 입력해주세요."></textarea>
+                    <input class="form-control" type="text" name="comment" id="comment" placeholder="댓글을 입력해주세요." />
                     <button class="btn btn-primary text-nowrap">작성</button>
                 </form>
 
 
                 {{!-- 댓글 표시 --}}
                 {{#if comments}}
-                <div class="card-header">{{ lengthOfList comments }} 개의 댓글이 있습니다.</div>
+                <div class="card-header rounded">{{ lengthOfList comments }} 개의 댓글이 있습니다.</div>
                 {{else}}
-                <div>첫 댓글의 주인공이 되보세요!</div>
+                <div class="card-header rounded">첫 댓글의 주인공이 되보세요!</div>
                 {{/if}}
                 <div>
                 {{#each comments }}
@@ -58,7 +58,7 @@
                         </div>
                     </div>
                     
-                    <div class="card-text">{{ content }}</div>
+                    <div class="card-subtitle">{{ content }}</div>
                     <div class="card-text text-muted">{{ dateString createdDt }}</div>
                 </div>
                 {{/each}}

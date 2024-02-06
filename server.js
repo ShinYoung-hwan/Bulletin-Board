@@ -3,6 +3,7 @@ import handlebars from "express-handlebars";
 import path from "path";
 import { createComment, createPost, deleteComment, deletePost, getComments, getPost, getindex, modifyComment, modifyPost } from "./services/db.service.js";
 import { helpers } from "./configs/handlebar.helper.js";
+import { checkDatabase } from "./configs/db.config.js";
 
 // 상수 설정
 const __dirname = path.resolve();
@@ -127,5 +128,6 @@ app.delete('/delete_comment', (req, res) => {
 })
 
 app.listen(3000, () => { 
+    checkDatabase();
     console.log('server starts'); 
 });

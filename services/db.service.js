@@ -1,7 +1,6 @@
 import fs from 'fs';
 import { paginator } from '../utils/paginator.js';
-
-const DATABASE = 'db.json';
+import { DATABASE } from '../configs/db.config.js';
 
 function getNextPostId (posts) {
     if (posts.length === 0) return 1;
