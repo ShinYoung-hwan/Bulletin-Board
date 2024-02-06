@@ -1,63 +1,73 @@
 {{!-- 게시글 영역 --}}
-<div id="modify" style="display:none;">
-    <input name="postTitle" id="postTitle" value="{{ post.title }}">
-    <textarea name="postContent" id="postContent">{{ post.content }}</textarea>
-    <button onclick="modifyPost({{ post.id }})">글 수정</button>
+<main class="container p-3">
 
-    <button href="#" onclick="showPost()">글 수정 취소</button>
-</div>
-<div id="lookup" style="">
-    <div>
-        {{!-- 수정 삭제 버튼 --}}
-        <div>
-            <a href="#" onclick="hidePost()">수정</a>
-            <a href="#" onclick="deletePost({{ post.id }})">삭제</a>
+    <div class="position-relative" id="modify" style="display:none;">
+        <input class="form-control" name="postTitle" id="postTitle" value="{{ post.title }}">
+        <textarea class="form-control" name="postContent" id="postContent" rows="10">{{ post.content }}</textarea>
+        <div class="position-absolute end-0">
+            <button class="btn btn-primary" onclick="modifyPost({{ post.id }})">글 수정</button>
+            <button class="btn btn-danger" href="#" onclick="showPost()">글 수정 취소</button>
         </div>
-        {{!-- 게시물 제목 --}}
-        <h1>{{ post.title }}</h1>
-
-        <div>
-            {{ dateString post.createdDt }}
-        </div>
-
-        {{!-- 게시물 내용 --}}
-        <p>{{ post.content }}</p>
     </div>
 
-    {{!-- 댓글 영역 --}}
-    <div>
-        {{!-- 댓글 입력 --}}
-        <form method="post">
-            <textarea name="comment" id="comment"></textarea>
-            <button>작성</button>
-        </form>
 
-        {{!-- 댓글 표시 --}}
-        {{#if comments}}
-
-        <div>{{ lengthOfList comments }} 개의 댓글이 있습니다.</div>
-        <div>
-        {{#each comments }}
-        <div>
-            <div>
-                <a href="#" onclick="modifyComment({{post_id}}, {{id}})">수정</a>
-                <a href="#" onclick="deleteComment({{post_id}}, {{id}})">삭제</a>
+    <div id="lookup">
+        <div class="card card-body mb-3">
+            {{!-- 수정 삭제 버튼 --}}
+            <div class="position-relative">
+                <div class="position-absolute end-0">
+                    <button class="btn btn-sm btn-outline-primary" onclick="hidePost()">수정</button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deletePost({{ post.id }})">삭제</button>
+                </div>
             </div>
-            <div>{{ id }}</div>
-            <div>{{ content }}</div>
-            <div>{{ dateString createdDt }}</div>
+
+
+            {{!-- 게시물 제목 --}}
+            <h1 class="card-title">{{ post.title }}</h1>
+
+            {{!-- 게시물 날짜 --}}
+            <p class="card-text text-muted">{{ dateString post.createdDt }}</p>
+
+            {{!-- 게시물 내용 --}}
+            <p class="card-text">{{ post.content }}</p>
         </div>
-        {{/each}}
+
+        {{!-- 댓글 영역 --}}
+        <div>
+            <div class="card card-body">
+                {{!-- 댓글 입력 --}}
+                <form class="form d-flex mb-3" method="post">
+                    <textarea class="form-control" name="comment" id="comment" placeholder="댓글을 입력해주세요."></textarea>
+                    <button class="btn btn-primary text-nowrap">작성</button>
+                </form>
+
+
+                {{!-- 댓글 표시 --}}
+                {{#if comments}}
+                <div class="card-header">{{ lengthOfList comments }} 개의 댓글이 있습니다.</div>
+                {{else}}
+                <div>첫 댓글의 주인공이 되보세요!</div>
+                {{/if}}
+                <div>
+                {{#each comments }}
+                <div class="card card-body">
+                    <div class="position-relative">
+                        <div class="position-absolute end-0">
+                            <button class="btn btn-sm btn-outline-primary" onclick="modifyComment({{post_id}}, {{id}})">수정</button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteComment({{post_id}}, {{id}})">삭제</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card-text">{{ content }}</div>
+                    <div class="card-text text-muted">{{ dateString createdDt }}</div>
+                </div>
+                {{/each}}
+                </div>
+            </div>
         </div>
-
-        {{else}}
-
-        <div>첫 댓글의 주인공이 되보세요!</div>
-
-        {{/if}}
-
     </div>
-</div>
+</main>
+
 
 
 <script>

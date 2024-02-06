@@ -11,10 +11,14 @@ function getNextCommentId (comments) {
     if (comments.length === 0) return 1;
     else return comments[comments.length-1].id + 1;
 }
-
-export function getPosts(search="", page=1) {
+function getPosts() {
     const db = fs.readFileSync(DATABASE);
-    let posts = JSON.parse(db.toString())['posts'].reverse();
+    const posts = JSON.parse(db.toString())['posts']
+    return posts;
+}
+
+export function getindex(search="", page=1) {
+    let posts = getPosts().reverse();
     const perPage = 10; // 한 번에 가져올 게시물 수
     const skips = (page-1) * perPage;
 
@@ -30,7 +34,7 @@ export function getPosts(search="", page=1) {
 }
 
 export function getPost(id) {
-    const post = getPosts()[0].filter((post) => post.id === id)[0];
+    const post = getPosts().filter((post) => post.id === id)[0];
     return post;
 }
 

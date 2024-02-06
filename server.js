@@ -1,7 +1,7 @@
 import express from "express";
 import handlebars from "express-handlebars";
 import path from "path";
-import { createComment, createPost, deleteComment, deletePost, getComments, getPost, getPosts, modifyComment, modifyPost } from "./services/db.service.js";
+import { createComment, createPost, deleteComment, deletePost, getComments, getPost, getindex, modifyComment, modifyPost } from "./services/db.service.js";
 import { helpers } from "./configs/handlebar.helper.js";
 
 // 상수 설정
@@ -13,6 +13,9 @@ var app = express();
 // express가 post 요청으로 넘어오는 정보를 해석하기 위함
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// express가 static 파일을 읽을 수 있도록 설정
+app.use(express.static("public"));
 
 // express-handlebars 설정
 app.engine("handlebars", handlebars.create({
@@ -32,7 +35,7 @@ app.get('/index', (req, res) => {
     //  게시판 리스트
     const search = req.query.search || "";
     const page = parseInt(req.query.page) || 1; // 현재 페이지 데이터, 기본값 1
-    const [ posts, paginator ] = getPosts(search, page);
+    const [ posts, paginator ] = getindex(search, page);
     res.render("index", { 
         posts,
         paginator
