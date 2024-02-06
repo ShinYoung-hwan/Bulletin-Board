@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { paginator } from '../utils/paginator.js';
 
 const DATABASE = 'db.json';
 
@@ -11,19 +12,25 @@ function getNextCommentId (comments) {
     else return comments[comments.length-1].id + 1;
 }
 
-export function getPosts(search=null) {
+export function getPosts(search="", page=1) {
     const db = fs.readFileSync(DATABASE);
-    let posts = JSON.parse(db.toString())['posts'];
+    let posts = JSON.parse(db.toString())['posts'].reverse();
+    const perPage = 10; // 한 번에 가져올 게시물 수
+    const skips = (page-1) * perPage;
 
-    if (search !== null) {
-        posts = posts.filter((post) => post.title.indexOf(search) !== -1 || post.content.indexOf(search) !== -1)
+    if (search !== "") {
+        posts = posts.filter((post) => {
+            return post.title.indexOf(search) !== -1 || post.content.indexOf(search) !== -1;
+        })
     }
-
-    return posts;
+    const totalCount = posts.length;
+    posts = posts.slice(skips, skips+perPage);
+    const paginatorObj = paginator(totalCount, page, perPage);
+    return [ posts, paginatorObj ];
 }
 
 export function getPost(id) {
-    const post = getPosts().filter((post) => post.id === id)[0];
+    const post = getPosts()[0].filter((post) => post.id === id)[0];
     return post;
 }
 

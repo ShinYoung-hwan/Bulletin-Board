@@ -30,21 +30,25 @@ app.get('/', (req, res) => {
 // 게시판 전체보기
 app.get('/index', (req, res) => {
     //  게시판 리스트
-    const search = req.query.search
-    const posts = getPosts(search)
+    const search = req.query.search || "";
+    const page = parseInt(req.query.page) || 1; // 현재 페이지 데이터, 기본값 1
+    const [ posts, paginator ] = getPosts(search, page);
     res.render("index", { 
         posts,
+        paginator
     });
 })
 // 게시글 생성
 app.post('/index', (req, res) => {
-    createPost(req.body);
+    const post = req.body;
+    createPost(post);
     res.redirect("index");
 })
 // 게시판 및 댓글 조회
 app.get('/detail/:id', (req, res) => {
-    const post = getPost(Number(req.params.id));
-    const comments = getComments(Number(req.params.id));
+    const id = parseInt(req.params.id);
+    const post = getPost(id);
+    const comments = getComments(id);
 
     // 게시물이 없는 경우
     if (post === undefined) {
@@ -59,18 +63,30 @@ app.get('/detail/:id', (req, res) => {
 })
 // 게시글 수정
 app.put('/detail/:id', (req, res) => {
-    const id = Number(req.params.id);
-    modifyPost(id, req.body);
-    return res.json({ isSuccess: true });
+    try {
+        const id = parseInt(req.params.id);
+        modifyPost(id, req.body);
+        return res.json({ isSuccess: true });
+    } catch (error) {
+        console.error(error);
+        res.statusCode = 500;
+        return res.json({ isSuccess: false });
+    }
 })
 // 게시글 삭제
 app.delete('/detail/:id', (req, res) => {
-    deletePost(req.body.id);
-    return res.json({ isSuccess: true });
+    try {
+        deletePost(req.body.id);
+        return res.json({ isSuccess: true });
+    } catch (error) {
+        console.error(error);
+        res.statusCode = 500;
+        return res.json({ isSuccess: false });
+    }
 })
 // 댓글 생성
 app.post('/detail/:id', (req, res) => {
-    const post_id = Number(req.params.id);
+    const post_id = parseInt(req.params.id);
     createComment(post_id, {
         "content": req.body["comment"]
     });
@@ -79,21 +95,32 @@ app.post('/detail/:id', (req, res) => {
 })
 // 댓글 수정
 app.put('/modify_comment', (req, res) => {
-    const post_id = Number(req.body.post_id);
-    const id = Number(req.body.id);
-    const commentContent = req.body.commentContent;
-    console.log(commentContent);
+    try {
+        const post_id = parseInt(req.body.post_id);
+        const id = parseInt(req.body.id);
+        const commentContent = req.body.commentContent;
+        modifyComment(post_id, id, commentContent);
+        return res.json({ isSuccess: true });
+    } catch (error) {
+        console.error(error);
+        res.statusCode = 500;
+        return res.json({ isSuccess: false });
+    }
 
-    modifyComment(post_id, id, commentContent);
-
-    return res.json({ isSuccess: true });
 })
 // 댓글 삭제
 app.delete('/delete_comment', (req, res) => {
-    const post_id = Number(req.body.post_id);
-    const id = Number(req.body.id);
-    deleteComment(post_id, id);
-    return res.json({ isSuccess: true });
+    try {
+        const post_id = parseInt(req.body.post_id);
+        const id = parseInt(req.body.id);
+        deleteComment(post_id, id);
+        return res.json({ isSuccess: true });
+    } catch (error) {
+        console.error(error);
+        res.statusCode = 500;
+        return res.json({ isSuccess: false });
+    }
+
 })
 
 app.listen(3000, () => { 
