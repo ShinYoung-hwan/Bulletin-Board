@@ -128,3 +128,17 @@ export function deleteComment(post_id, id) {
     data["comments"] = filteredComments;
     fs.writeFileSync(DATABASE, JSON.stringify(data));
 }
+
+const dbService = {
+    createComment, 
+    createPost, 
+    deleteComment, 
+    deletePost, 
+    getComments, 
+    getPost, 
+    getindex, 
+    modifyComment, 
+    modifyPost
+};
+
+export default dbService;

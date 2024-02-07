@@ -7,9 +7,14 @@ export function checkDatabase() {
         fs.writeFileSync(DATABASE, JSON.stringify({
             "posts": [],
             "comments": [],
-        }), {
-            flag: "w"
-        });
+            "auths": []
+        }));
         console.log(`Database ${DATABASE} is created`)
     }
 }
+
+const dbConfig = {
+    checkDatabase,
+}
+
+export default dbConfig;

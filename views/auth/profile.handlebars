@@ -1,0 +1,31 @@
+{{!-- 프로필 --}}
+<main class="container p-3 card">
+    <div class="card-body">
+        <div class="position-relative">
+            <div class="position-absolute end-0">
+                <a class="btn btn-outline-primary" onclick="">정보 변경</a>
+                <a class="btn btn-outline-danger" onclick="">회원 탈퇴</a>
+            </div>
+        </div>     
+
+        <h1 class="card-title mb-3">Profile</h1>
+
+        <label class="form-label">Username</label>
+        <div class="form-control mb-3">{{ username }}</div>
+
+        <label class="form-label">Email</label>
+        <div class="form-control mb-3">{{ email }}</div>
+
+
+        
+        <label class="form-label">Birth Date</label>
+        <div class="form-control mb-3" >{{ dateString birthdate }}</div>
+        
+
+    </div>
+
+</main>
+
+<script>
+    
+</script>

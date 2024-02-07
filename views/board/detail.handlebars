@@ -84,7 +84,7 @@ async function modifyPost (id) {
     const title = document.getElementById("postTitle").value;
     const content = document.getElementById("postContent").value;
     console.log(title, content);
-    const result = await fetch(`/detail/${id}`, {
+    const result = await fetch(`/board/detail/${id}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
@@ -101,7 +101,7 @@ async function modifyPost (id) {
     document.location.reload();
 }
 async function deletePost (id) {
-    const result = await fetch(`/detail/${id}`, {
+    const result = await fetch(`/board/detail/${id}`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json"
@@ -118,7 +118,7 @@ async function deletePost (id) {
 }
 async function modifyComment (post_id, id) {
     const commentContent = prompt("수정할 내용을 입력해주세요");
-    const result = await fetch("/modify_comment", {
+    const result = await fetch("/board/modify_comment", {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
@@ -134,7 +134,7 @@ async function modifyComment (post_id, id) {
     document.location.reload();
 }
 async function deleteComment (post_id, id) {
-    const result = await fetch("/delete_comment", {
+    const result = await fetch("/board/delete_comment", {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json"

@@ -1,0 +1,104 @@
+{{!-- 회원가입 페이지 --}}
+<main class="container p-3 d-flex justify-content-center">
+    <div class="card" style="min-width: 40%;">
+        <div class="card-body">
+            <h1 class="card-title mb-3">회원가입</h1>
+            {{!-- id --}}
+            <label class="form-label">ID</label>
+            <input class="form-control mb-3" type="text" name="id" id="id" />
+
+            {{!-- password1 --}}
+            <label class="form-label">비밀번호</label>
+            <input class="form-control mb-3" type="password" name="password1" id="password1" />
+
+            {{!-- password2 --}}
+            <label class="form-label">비밀번호 재입력</label>
+            <input class="form-control mb-3" type="password" name="password2" id="password2" />
+
+            {{!-- 이름 --}}
+            <label class="form-label">이름</label>
+            <input class="form-control mb-3" type="text" name="username" id="username" />
+
+            {{!-- 생년월일 --}}
+            <label class="form-label">생년월일</label>
+            <input class="form-control mb-3" type="text" name="birthdate" id="birthdate" placeholder="YYYY-MM-DD"/>
+
+            {{!-- 이메일 --}}
+            <label class="form-label">이메일</label>
+            <input class="form-control mb-3" type="email" name="email" id="email" />
+
+            {{!-- 제출 버튼 --}}
+            <button class="btn btn-primary" style="width: 100%" onclick="createUser()">회원가입</button>
+        </div>
+    </div>
+    
+</main>
+
+<script>
+async function createUser(){
+    const id = document.getElementById("id").value;
+    const password1 = document.getElementById("password1").value;
+    const password2 = document.getElementById("password2").value;
+    const username = document.getElementById("username").value;
+    const birthdate = document.getElementById("birthdate").value;
+    const email = document.getElementById("email").value;
+
+    const emailRegExp = /([A-Z]||[a-z]||[.])+[@]([A-Z]||[a-z]+\.)+(com|net|kr)/;
+    const dateRegExp = /(19[0-9][0-9]|20\d{2})-(0[0-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])/;
+
+    // 입력된 값들이 유효한지 확인
+    if (id === "") {
+        alert("아이디를 입력해주세요");
+        return;
+    }
+    else if (password1 === "") {
+        alert("비밀번호를 입력해주세요");
+        return;
+    }
+    else if (password2 === "") {
+        alert("비밀번호 재확인을 입력해주세요");
+        return;
+    }
+    else if (username === "") { 
+        alert("이름을 입력해주세요");
+        return;
+    }
+    else if (birthdate === "" || !dateRegExp.test(birthdate)) { 
+        alert("생년월일을 바르게 입력해주세요");
+        return;
+    }
+    else if (email === "" || !emailRegExp.test(email)){ 
+        alert("이메일을 바르게 입력해주세요");
+        return;
+    } 
+
+    // 입력된 비밀번호가 서로 다른 경우
+    if (password1 !== password2){
+        alert("비밀번호가 다릅니다!");
+        return
+    }
+
+    const result = await fetch("/auth/signup", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            id,
+            "password": password1,
+            username,
+            "birthdate": new Date(birthdate),
+            email
+        })
+    })
+    const data = await result.json();
+    // 이미 가입된 유저가 있는 경우
+    if(!data.isSuccess) {
+        alert("이미 가입된 사용자가 있습니다!");
+        document.location.reload();
+    } else {
+        alert("가입에 성공했습니다.!");
+        document.location = "/auth/login";
+    }
+}
+</script>

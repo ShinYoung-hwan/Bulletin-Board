@@ -1,0 +1,47 @@
+{{!-- 로그인 페이지 --}}
+<main class="container p-3 d-flex justify-content-center">
+    <div class="card" style="min-width: 40%;"> 
+        <div class="card-body" >
+            <h1 class="form-label mb-3">Login</h1>
+            <input class="form-control mb-3" type="text" name="id" id="id" placeholder="ID"/>
+            <input class="form-control mb-3" type="password" name="password" id="password" placeholder="password">
+            <button class="btn btn-primary" style="width:100%" onclick="loginUser()">로그인</button>
+        </div>
+    </div>
+
+</main>
+
+<script>
+async function loginUser() {
+    const id = document.getElementById("id").value;
+    const password = document.getElementById("password").value;
+
+    if (id === "") {
+        alert("id를 바르게 입력해주세요");
+        return;
+    } else if (password === "") {
+        alert("비밀번호를 바르게 입력해주세요");
+        return;
+    }
+
+    const result = await fetch("/auth/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            id,
+            password
+        })
+    })
+    const data = await result.json();
+
+    if (!data.isSuccess) {
+        alert("로그인 정보가 잘못되었습니다.");
+        document.location.reload();
+    } else {
+        document.location = "/board/index";
+    }
+    
+}
+</script>
