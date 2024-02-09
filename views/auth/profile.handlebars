@@ -1,10 +1,12 @@
 {{!-- 프로필 --}}
 <main class="container p-3 card">
     <div class="card-body">
+
+        {{#with auth}}
         <div class="position-relative">
             <div class="position-absolute end-0">
-                <a class="btn btn-outline-primary" onclick="">정보 변경</a>
-                <a class="btn btn-outline-danger" onclick="">회원 탈퇴</a>
+                <a href="/auth/modify_profile" class="btn btn-outline-primary">정보 변경</a>
+                <a class="btn btn-outline-danger" onclick="checkSignout()">회원 탈퇴</a>
             </div>
         </div>     
 
@@ -16,16 +18,30 @@
         <label class="form-label">Email</label>
         <div class="form-control mb-3">{{ email }}</div>
 
-
         
         <label class="form-label">Birth Date</label>
         <div class="form-control mb-3" >{{ dateString birthdate }}</div>
-        
-
+        {{/with}}
     </div>
 
 </main>
 
 <script>
-    
+async function checkSignout() {
+    // 재확인 문구에서 취소
+    if(!confirm("정말로 탈퇴하시겠습니까?")) return;
+
+    // 삭제 프로세스
+    const result = await fetch("/auth/profile", {
+        method: "DELETE"
+    });
+    const data = await result.json();
+    if (!data.isSuccess) {
+        alert("회원탈퇴에 실패했습니다.");
+        document.location.reload();
+    } else {
+        alert("회원탈퇴에 성공했습니다.");
+        document.location.href = "/auth/login";
+    }
+}
 </script>

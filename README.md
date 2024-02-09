@@ -1,4 +1,4 @@
-# Board
+# Bulletin Board
 
 # 다운로드
 
@@ -17,6 +17,10 @@
 ```
 
 - 서버 접속 [http://localhost:3000/]
+
+# 추가 업데이트 목표
+
+- database json에서 MySQL로 변경
 
 # 사용 기술
 

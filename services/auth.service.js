@@ -38,19 +38,45 @@ export function loginUser(signature) {
     return { "isSuccess": true, "user": filteredAuth[0] };
 }
 
+// 유저 정보 받기
 export function getUserInfo(email) {
     const db = fs.readFileSync(DATABASE);
     const auths = JSON.parse(db.toString())["auths"];
     const filteredAuth = auths.filter((auth) => auth.email === email);
     return filteredAuth[0];
 }
+// 유저 정보 변경
+export function modifyUserInfo(userInfo) {
+    const db = fs.readFileSync(DATABASE);
+    const data = JSON.parse(db.toString());
+    data["auths"].forEach((auth) => {
+        if (auth.email === userInfo.email){
+            auth.id = userInfo.id;
+            auth.password = userInfo.password;
+            auth.username = userInfo.username;
+            auth.birthdate = userInfo.birthdate;
+        }
+    })
+    fs.writeFileSync(DATABASE, JSON.stringify(data));
+    return true;
+}
+// 유저 정보 삭제
+export function deleteUser(email) {
+    const db = fs.readFileSync(DATABASE);
+    const data = JSON.parse(db.toString());
+    const filteredAuth = data["auths"].filter((auth) => auth.email !== email);
 
-
+    data["auths"] = filteredAuth;
+    fs.writeFileSync(DATABASE, JSON.stringify(data));
+    return true
+}
 
 const authService = {
     createUser,
     loginUser,
     getUserInfo,
+    modifyUserInfo,
+    deleteUser,
 }
 
 export default authService;
