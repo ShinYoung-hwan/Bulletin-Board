@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { paginator } from '../utils/paginator.js';
+import { paginator } from '../utils/paginator.utils.js';
 import { DATABASE } from '../configs/db.config.js';
 
 function getNextPostId (posts) {

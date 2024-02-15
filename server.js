@@ -5,8 +5,8 @@ import path from "path";
 
 import dbConfig from "./configs/db.config.js";
 import { helpers } from "./configs/handlebar.helper.js";
-import auth_router from "./router/auth.js";
-import board_router from "./router/board.js";
+import auth_router from "./router/auth.router.js";
+import board_router from "./router/board.router.js";
 
 // 상수 설정
 const __dirname = path.resolve();
