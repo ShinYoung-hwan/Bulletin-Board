@@ -1,16 +1,15 @@
-import fs from "fs";
-export const DATABASE = 'db.json';
+import mysql from "mysql2/promise";
 
-export function checkDatabase() {
-    // 데이터베이스가 생성되어 있지 않다면 생성한다.
-    if(!fs.existsSync(DATABASE)){ 
-        fs.writeFileSync(DATABASE, JSON.stringify({
-            "posts": [],
-            "comments": [],
-            "auths": []
-        }));
-        console.log(`Database ${DATABASE} is created`)
-    }
+export const dbConnection = await mysql.createConnection({
+    host: "localhost",
+    user: "test",
+    password: "test1234",
+    database: "boardDB",
+});
+
+export async function checkDatabase() {
+    const [ rows, _ ] = await dbConnection.query("SELECT * FROM posts");
+    console.log("데이터베이스 정상 연결 완료");
 }
 
 const dbConfig = {

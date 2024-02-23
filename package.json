@@ -5,9 +5,9 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "node --watch server.js"
   },
-  "devDependencies": {},
   "keywords": [],
   "author": "SYH",
   "description": "",
@@ -17,6 +17,8 @@
     "express-session": "^1.18.0",
     "jest": "^29.7.0",
     "lodash": "^4.17.21",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.9.1",
     "supertest": "^6.3.4"
   }
 }

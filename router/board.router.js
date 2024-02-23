@@ -1,18 +1,19 @@
 import { Router } from "express";
 
-import dbService from "../services/board.service.js";
+import postService from "../services/post.service.js";
+import commentService from "../services/comment.service.js";
 
 const router = Router();
 
 // 게시판 전체보기
-router.get('/index', (req, res) => {
+router.get('/index', async (req, res) => {
     //  게시판 리스트
     // 로그인 되어 있다면
     if(!req.session.user) res.redirect("/auth/login");
     else {
         const search = req.query.search || "";
         const page = parseInt(req.query.page) || 1; // 현재 페이지 데이터, 기본값 1
-        const [ posts, paginator ] = dbService.getindex(search, page);
+        const [ posts, paginator ] = await postService.getindex(search, page);
         res.render("board/index", { 
             posts,
             paginator
@@ -21,19 +22,20 @@ router.get('/index', (req, res) => {
 
 })
 // 게시글 생성
-router.post('/index', (req, res) => {
+router.post('/index', async (req, res) => {
     const post = req.body;
-    dbService.createPost(post);
+    const writer_id = parseInt(req.session.user.id);
+    await postService.createPost(post, writer_id);
     res.redirect("/board/index");
 })
 // 게시판 및 댓글 조회
-router.get('/detail/:id', (req, res) => {
+router.get('/detail/:id', async (req, res) => {
     // 로그인 안되어 있는 경우
     if (!req.session.user) res.redirect("/auth/login");
     else {
         const id = parseInt(req.params.id);
-        const post = dbService.getPost(id);
-        const comments = dbService.getComments(id);
+        const post = await postService.getPost(id);
+        const comments = await commentService.getComments(id);
     
         // 게시물이 없는 경우
         if (post === undefined) {
@@ -49,10 +51,10 @@ router.get('/detail/:id', (req, res) => {
 
 })
 // 게시글 수정
-router.put('/detail/:id', (req, res) => {
+router.put('/detail/:id', async (req, res) => {
     try {
         const id = parseInt(req.params.id);
-        dbService.modifyPost(id, req.body);
+        await postService.modifyPost(id, req.body);
         return res.json({ isSuccess: true });
     } catch (error) {
         console.error(error);
@@ -61,9 +63,9 @@ router.put('/detail/:id', (req, res) => {
     }
 })
 // 게시글 삭제
-router.delete('/detail/:id', (req, res) => {
+router.delete('/detail/:id', async (req, res) => {
     try {
-        dbService.deletePost(req.body.id);
+        await postService.deletePost(req.body.id);
         return res.json({ isSuccess: true });
     } catch (error) {
         console.error(error);
@@ -72,21 +74,23 @@ router.delete('/detail/:id', (req, res) => {
     }
 })
 // 댓글 생성
-router.post('/detail/:id', (req, res) => {
+router.post('/detail/:id', async (req, res) => {
     const post_id = parseInt(req.params.id);
-    dbService.createComment(post_id, {
+    const writer_id = parseInt(req.session.user.id);
+    await commentService.createComment(post_id, {
         "content": req.body["comment"]
-    });
+    }, writer_id
+    );
 
     res.redirect(`/board/detail/${post_id}`);
 })
 // 댓글 수정
-router.put('/modify_comment', (req, res) => {
+router.put('/modify_comment', async (req, res) => {
     try {
         const post_id = parseInt(req.body.post_id);
         const id = parseInt(req.body.id);
         const commentContent = req.body.commentContent;
-        dbService.modifyComment(post_id, id, commentContent);
+        await commentService.modifyComment(post_id, id, commentContent);
         return res.json({ isSuccess: true });
     } catch (error) {
         console.error(error);
@@ -96,11 +100,11 @@ router.put('/modify_comment', (req, res) => {
 
 })
 // 댓글 삭제
-router.delete('/delete_comment', (req, res) => {
+router.delete('/delete_comment', async (req, res) => {
     try {
         const post_id = parseInt(req.body.post_id);
         const id = parseInt(req.body.id);
-        dbService.deleteComment(post_id, id);
+        await commentService.deleteComment(post_id, id);
         return res.json({ isSuccess: true });
     } catch (error) {
         console.error(error);

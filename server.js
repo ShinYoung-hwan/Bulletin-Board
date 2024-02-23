@@ -8,11 +8,11 @@ import { helpers } from "./configs/handlebar.helper.js";
 import auth_router from "./router/auth.router.js";
 import board_router from "./router/board.router.js";
 
-// 상수 설정
+// // 상수 설정
 const __dirname = path.resolve();
 const PORT = 3000;
 
-// express server 설정
+// // express server 설정
 var app = express();
 
 // express-session 사용
@@ -55,7 +55,7 @@ app.get('/', (req, res) => {
     // res.render("root", { path: "root" });
 })
 
-app.listen(PORT, () => { 
-    dbConfig.checkDatabase();
+app.listen(PORT, async () => { 
+    await dbConfig.checkDatabase();
     console.log(`server starts at http://localhost:${PORT}`); 
 });

@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import authService, { deleteUser } from "../services/auth.service.js";
+import authService from "../services/auth.service.js";
 
 const router = Router();
 
@@ -13,17 +13,18 @@ router.get("/login", (req, res) => {
     }
 })
 // 회원가입 확인
-router.post("/signup", (req, res) => {
-    const isSuccess = authService.createUser(req.body);
+router.post("/signup", async (req, res) => {
+    const isSuccess = await authService.createUser(req.body);
     return res.json({ isSuccess })
 })
 // 로그인 확인
-router.post("/login", (req, res) => {
-    const { isSuccess, user } = authService.loginUser(req.body);
+router.post("/login", async (req, res) => {
+    const { isSuccess, user } = await authService.loginUser(req.body);
     if (isSuccess){
         req.session.user = {
             name: user.username,
             email: user.email,
+            id: user.id,
             authorized: true,
         }
     }
@@ -47,31 +48,37 @@ router.get("/signup", (req, res) => {
 })
 
 // 프로필 상세 페이지
-router.get("/profile", (req, res) => {
+router.get("/profile", async (req, res) => {
     // 로그인되어 있지 않다면
     if (!req.session.user) res.redirect("/auth/login");
     else {
-        const auth = authService.getUserInfo(req.session.user.email);
+        const auth = await authService.getUserInfo(req.session.user.email);
         res.render("auth/profile", { auth });
     }
 })
 // 사용자 삭제
-router.delete("/profile", (req, res) => {
-    const isSuccess = deleteUser(req.session.user.email);
+router.delete("/profile", async (req, res) => {
+    const isSuccess = await authService.deleteUser(req.session.user.email);
+    if (req.session.user) {
+        req.session.destroy((error) => {
+            console.log(error);
+            return;
+        })
+    }
     res.json({ isSuccess });
 })
 // 프로필 변경 페이지
-router.get("/modify_profile", (req, res) => {
+router.get("/modify_profile", async (req, res) => {
     if (!req.session.user) res.redirect("/auth/login");
     else {
-        const auth = authService.getUserInfo(req.session.user.email);
+        const auth = await authService.getUserInfo(req.session.user.email);
         res.render("auth/signup", { "mode": "modify", auth });
     }
 })
 // 프로필 변경 
-router.put("/modify_profile", (req, res) => {
+router.put("/modify_profile", async (req, res) => {
     const userInfo = req.body;
-    const isSuccess = authService.modifyUserInfo(userInfo);
+    const isSuccess = await authService.modifyUserInfo(userInfo);
 
     res.json({ isSuccess });
 })

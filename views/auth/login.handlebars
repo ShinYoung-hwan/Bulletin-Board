@@ -3,7 +3,7 @@
     <div class="card" style="min-width: 40%;"> 
         <div class="card-body" >
             <h1 class="form-label mb-3">Login</h1>
-            <input class="form-control mb-3" type="text" name="id" id="id" placeholder="ID"/>
+            <input class="form-control mb-3" type="text" name="email" id="email" placeholder="E-mail"/>
             <input class="form-control mb-3" type="password" name="password" id="password" placeholder="password">
             <button class="btn btn-primary" style="width:100%" onclick="loginUser()">로그인</button>
         </div>
@@ -13,10 +13,10 @@
 
 <script>
 async function loginUser() {
-    const id = document.getElementById("id").value;
+    const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
-    if (id === "") {
+    if (email === "") {
         alert("id를 바르게 입력해주세요");
         return;
     } else if (password === "") {
@@ -30,7 +30,7 @@ async function loginUser() {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            id,
+            email,
             password
         })
     })

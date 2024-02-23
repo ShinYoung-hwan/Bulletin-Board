@@ -1,73 +1,62 @@
-import fs from "fs";
-import { DATABASE } from "../configs/db.config.js";
+import { dbConnection } from "../configs/db.config.js";
+import { getSqlDate } from "../utils/date.utils.js";
 
 // 사용자를 생성해서 db에 저장
-export function createUser(signature) {
-    const db = fs.readFileSync(DATABASE);
-    const data = JSON.parse(db.toString())
-    const auths = data["auths"];
-
-    const filteredAuth = auths.filter((auth) => auth.email === signature.email)
-    // 이미 해당 이메일로 사용자가 생성된 경우
-    if (filteredAuth.length !== 0) {
-        return false;
-    } 
-
-    auths.push(signature);
-    data["auths"] = auths;
-    fs.writeFileSync(DATABASE, JSON.stringify(data));
-    return true
+export async function createUser(signature) {
+    await dbConnection.query(
+        `INSERT INTO auths \
+        (pw, username, email, birthdate) \
+        VALUES ('${signature.password}', '${signature.username}', '${signature.email}', '${getSqlDate(new Date(signature.birthdate))}')`
+    )
+    return true;
 }
 
 // db에 사용자가 있는지 확인
-export function loginUser(signature) {
-    const db = fs.readFileSync(DATABASE);
-    const auths = JSON.parse(db.toString())["auths"];
-
-    const filteredAuth = auths.filter((auth) => auth.id === signature.id);
-
+export async function loginUser(signature) {
+    const [ user, fields ] = await dbConnection.query(
+        `SELECT * FROM auths \
+        WHERE email = '${signature.email}'`
+    )
     // 가입된 사용자가 없을경우
-    if (filteredAuth.length === 0) {
-        return { isSuccess: false, filteredAuth };
+    if (user.length === 0) {
+        return { isSuccess: false, user };
     } 
     // 비밀번호가 다른 경우
-    else if (signature.password !== filteredAuth[0].password) {
-        return { isSuccess: false, filteredAuth };
+    else if (signature.password !== user[0].pw) {
+        return { isSuccess: false, user };
     }
 
-    return { "isSuccess": true, "user": filteredAuth[0] };
+    return { "isSuccess": true, "user": user[0] };
 }
 
 // 유저 정보 받기
-export function getUserInfo(email) {
-    const db = fs.readFileSync(DATABASE);
-    const auths = JSON.parse(db.toString())["auths"];
-    const filteredAuth = auths.filter((auth) => auth.email === email);
-    return filteredAuth[0];
+export async function getUserInfo(email) {
+    const [ user, fields ] = await dbConnection.query(
+        `SELECT * FROM auths \
+        WHERE email = '${email}'`
+    )
+    user[0].birthdate = user[0].birthdate.toISOString();
+    return user[0];
 }
 // 유저 정보 변경
-export function modifyUserInfo(userInfo) {
-    const db = fs.readFileSync(DATABASE);
-    const data = JSON.parse(db.toString());
-    data["auths"].forEach((auth) => {
-        if (auth.email === userInfo.email){
-            auth.id = userInfo.id;
-            auth.password = userInfo.password;
-            auth.username = userInfo.username;
-            auth.birthdate = userInfo.birthdate;
-        }
-    })
-    fs.writeFileSync(DATABASE, JSON.stringify(data));
+export async function modifyUserInfo(userInfo) {
+
+    await dbConnection.query(
+        `UPDATE auths \
+        SET \
+             pw = '${userInfo.password}', \
+             username = '${userInfo.username}', \
+             birthdate = '${getSqlDate(new Date(userInfo.birthdate))}' \
+        WHERE email = '${userInfo.email}'`
+    )
     return true;
 }
 // 유저 정보 삭제
-export function deleteUser(email) {
-    const db = fs.readFileSync(DATABASE);
-    const data = JSON.parse(db.toString());
-    const filteredAuth = data["auths"].filter((auth) => auth.email !== email);
-
-    data["auths"] = filteredAuth;
-    fs.writeFileSync(DATABASE, JSON.stringify(data));
+export async function deleteUser(email) {
+    await dbConnection.query(
+        `DELETE FROM auths
+        WHERE email = '${email}'`
+    );
     return true
 }
 

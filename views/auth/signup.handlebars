@@ -3,9 +3,10 @@
     <div class="card" style="min-width: 40%;">
         <div class="card-body">
             <h1 class="card-title mb-3">회원가입</h1>
-            {{!-- id --}}
-            <label class="form-label">ID</label>
-            <input class="form-control mb-3" type="text" name="id" id="id" {{#if (eq mode "modify")}}value="{{ auth.id }}"{{/if}} />
+
+            {{!-- 이메일 --}}
+            <label class="form-label">이메일</label>
+            <input class="form-control mb-3" type="email" name="email" id="email" {{#if (eq mode "modify")}}value="{{ auth.email }}" disabled{{/if}}/>
 
             {{!-- password1 --}}
             <label class="form-label">비밀번호</label>
@@ -23,9 +24,6 @@
             <label class="form-label">생년월일</label>
             <input class="form-control mb-3" type="text" name="birthdate" id="birthdate" placeholder="YYYY-MM-DD" {{#if (eq mode "modify")}}value="{{ dateFormat auth.birthdate }}"{{/if}}/>
 
-            {{!-- 이메일 --}}
-            <label class="form-label">이메일</label>
-            <input class="form-control mb-3" type="email" name="email" id="email" {{#if (eq mode "modify")}}value="{{ auth.email }}" disabled{{/if}}/>
 
             {{!-- 제출 버튼 --}}
             {{#if (eq mode "modify")}}
@@ -42,7 +40,6 @@
 
 // 채운 form 유효성 검사
 function validate() {
-    const id = document.getElementById("id").value;
     const password1 = document.getElementById("password1").value;
     const password2 = document.getElementById("password2").value;
     const username = document.getElementById("username").value;
@@ -53,7 +50,6 @@ function validate() {
     const dateRegExp = /(19[0-9][0-9]|20\d{2})-(0[0-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])/;
 
     const user = {
-        id,
         "password": password1,
         username,
         "birthdate": new Date(birthdate).toISOString(),
@@ -61,10 +57,7 @@ function validate() {
     };
 
     // 입력된 값들이 유효한지 확인
-    if (id === "") {
-        alert("아이디를 입력해주세요");
-        return { "isSuccess": false, user };
-    } else if (password1 === "") {
+    if (password1 === "") {
         alert("비밀번호를 입력해주세요");
         return { "isSuccess": false, user };
     } else if (password2 === "") {

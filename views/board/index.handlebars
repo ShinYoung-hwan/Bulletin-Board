@@ -16,8 +16,9 @@
         <thead>
             <tr>
                 {{!-- <th>#</th> --}}
-                <th style="width: 30%">Title</th>
-                <th style="width: 50%">Content</th>
+                <th style="width: 20%">Title</th>
+                <th style="width: 40%">Content</th>
+                <th style="width: 20%">Writer</th>
                 <th style="width: 20%">date</th>
             </tr>
         </thead>
@@ -27,6 +28,7 @@
                 {{!-- <td>{{ id }}</td> --}}
                 <td>{{ title }}</a></td>
                 <td>{{ preview content }}</td>
+                <td>{{ writer }}</td>
                 <td>{{ dateString createdDt }}</td>
             </tr>
             {{/each}}
