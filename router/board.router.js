@@ -28,6 +28,7 @@ router.post('/index', async (req, res) => {
     await postService.createPost(post, writer_id);
     res.redirect("/board/index");
 })
+
 // 게시판 및 댓글 조회
 router.get('/detail/:id', async (req, res) => {
     // 로그인 안되어 있는 경우
@@ -45,10 +46,22 @@ router.get('/detail/:id', async (req, res) => {
     
         res.render("board/detail", {
             post,
-            comments
+            comments,
+            user_id: req.session.user.id
         });
     }
 
+})
+// 댓글 생성
+router.post('/detail/:id', async (req, res) => {
+    const post_id = parseInt(req.params.id);
+    const writer_id = parseInt(req.session.user.id);
+    await commentService.createComment(post_id, {
+        "content": req.body["comment"]
+    }, writer_id
+    );
+
+    res.redirect(`/board/detail/${post_id}`);
 })
 // 게시글 수정
 router.put('/detail/:id', async (req, res) => {
@@ -73,17 +86,7 @@ router.delete('/detail/:id', async (req, res) => {
         return res.json({ isSuccess: false });
     }
 })
-// 댓글 생성
-router.post('/detail/:id', async (req, res) => {
-    const post_id = parseInt(req.params.id);
-    const writer_id = parseInt(req.session.user.id);
-    await commentService.createComment(post_id, {
-        "content": req.body["comment"]
-    }, writer_id
-    );
 
-    res.redirect(`/board/detail/${post_id}`);
-})
 // 댓글 수정
 router.put('/modify_comment', async (req, res) => {
     try {

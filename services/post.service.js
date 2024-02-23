@@ -34,7 +34,7 @@ export async function getindex(search="", page=1) {
 export async function getPost(id) {
     const [ post, fields ] = await dbConnection.query(
         `SELECT P.*, A.username AS writer FROM posts P\
-        JOIN auths A \
+        LEFT JOIN auths A \
         ON P.writer_id = A.id \
         WHERE P.id = ${id}`
     );
